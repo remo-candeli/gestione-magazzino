@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 
-import static junit.framework.TestCase.assertEquals;
 
 
 public class DespositoAlimentareTest {
