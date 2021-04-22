@@ -1,6 +1,7 @@
 package org.corso.magazzino;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public abstract class Prodotto {
     
@@ -44,6 +45,18 @@ public abstract class Prodotto {
     public void setCostoProdotto(int costoProdotto) {
         this.costoProdotto = costoProdotto;
     }
-   
-    
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Prodotto prodotto = (Prodotto) o;
+        return Objects.equals(nomeProdotto, prodotto.nomeProdotto) && Objects.equals(marca, prodotto.marca);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nomeProdotto, marca);
+    }
 }

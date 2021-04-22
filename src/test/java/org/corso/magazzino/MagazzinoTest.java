@@ -1,5 +1,6 @@
 package org.corso.magazzino;
 
+import org.corso.magazzino.exceptions.ErroreCapacitaMassimaDepositoSuperata;
 import org.corso.magazzino.exceptions.ErroreCaricoException;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +25,7 @@ public class MagazzinoTest {
 
     @Before
     public void setUp() {
+        //DepositoAlimentare depositoAlimentari = Mockito.mock(DepositoAlimentare.class);
         depositoAlimentari = new DepositoAlimentare(Magazzino.DEPOSITO_ALIMENTARI, 20);
         depositoNonAlimentari = new DepositoNonAlimentare(Magazzino.DEPOSITO_NON_ALIMENTARI, 50);
         magazzino = new Magazzino(depositoAlimentari, depositoNonAlimentari);
@@ -39,6 +41,20 @@ public class MagazzinoTest {
     }
 
 
+    @Test(expected = ErroreCaricoException.class)
+    public void eccezioneSeQtaNegativa_carico() throws ErroreCaricoException, ErroreCapacitaMassimaDepositoSuperata {
+        // cosa dobbiamo fare per testare il metodo aspettandoci che se passiamo
+        // un null come prodotto deve essere generata una eccezione
+        Prodotto prodottoAlimentareDaCaricare = new ProdottoAlimentare("Spaghetti"
+                , "Barilla"
+                , 100
+                , LocalDate.of(2021, 04, 28));
+
+        magazzino.carico(prodottoAlimentareDaCaricare, -10);
+    }
+
+
+
     /**
      * una ulteriore verifica che si potrebbe fare é quella di capire se il metodo carico di Magazzino
      * chiami effetivamente il caricoDeposito corretto o no.
@@ -50,7 +66,7 @@ public class MagazzinoTest {
      * @throws ErroreCaricoException
      */
     @Test
-    public void verificaSelezioneCorrettoDepositoAlimentari_carico() throws ErroreCaricoException {
+    public void verificaSelezioneCorrettoDepositoAlimentari_carico() throws ErroreCaricoException, ErroreCapacitaMassimaDepositoSuperata {
         Prodotto prodottoAlimentareDaCaricare = new ProdottoAlimentare("Spaghetti"
                                                                         , "Barilla"
                                                                         , 100

@@ -1,12 +1,17 @@
 package org.corso.magazzino;
 
+import org.corso.magazzino.exceptions.ErroreCapacitaMassimaDepositoSuperata;
+import org.corso.magazzino.exceptions.ErroreCaricoException;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-public class Deposito {
+public abstract class Deposito {
     private String nome;
     private int capacitaMassima;
-    private Map<Prodotto , Integer> prodotti;
+    private int esistenzaComplessiva;
+    private Map<Prodotto, Integer> prodotti;
 
     public Deposito(){
         prodotti = new HashMap<>();
@@ -16,16 +21,22 @@ public class Deposito {
         this();
         this.nome = nome;
         this.capacitaMassima = capacitaMassima;
+        this.esistenzaComplessiva = 0;
     }
 
-    public void caricoDeposito(Prodotto prodotto,int quantita) {
-        if(prodotto != null){
-            int nuovaEsistenza = 0;
-            if(prodotti.get(prodotto) != null){
-                nuovaEsistenza = prodotti.get(prodotto) + quantita;
-            }
-            prodotti.put(prodotto, nuovaEsistenza + quantita);
+    public void caricoDeposito(Prodotto prodotto, int quantita) throws ErroreCaricoException, ErroreCapacitaMassimaDepositoSuperata {
+        if(quantita<0 || prodotto==null)
+            throw new ErroreCaricoException();
+
+        int esistenza = 0;
+        if(prodotti.get(prodotto) != null){
+            esistenza = prodotti.get(prodotto) + quantita;
         }
+        if (capacitaMassima < esistenzaComplessiva + quantita)
+            throw new ErroreCapacitaMassimaDepositoSuperata();
+
+        prodotti.put(prodotto, esistenza + quantita);
+        this.esistenzaComplessiva += quantita;
     }
 
 
@@ -46,28 +57,15 @@ public class Deposito {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((nome == null) ? 0 : nome.hashCode());
-        return result;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Deposito deposito = (Deposito) o;
+        return nome.equals(deposito.nome);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Deposito other = (Deposito) obj;
-        if (nome == null) {
-            if (other.nome != null)
-                return false;
-        } else if (!nome.equals(other.nome))
-            return false;
-        return true;
+    public int hashCode() {
+        return Objects.hash(nome);
     }
-    
 }

@@ -1,5 +1,6 @@
 package org.corso.magazzino;
 
+import org.corso.magazzino.exceptions.ErroreCapacitaMassimaDepositoSuperata;
 import org.corso.magazzino.exceptions.ErroreCaricoException;
 import org.corso.magazzino.exceptions.ErroreScaricoException;
 
@@ -30,12 +31,13 @@ public class Magazzino {
     }
 
 
-    public void carico(Prodotto prodotto, int quantita) throws ErroreCaricoException {
-        if (prodotto == null){
+    public void carico(Prodotto prodotto, int quantita) throws ErroreCaricoException, ErroreCapacitaMassimaDepositoSuperata {
+        if (prodotto == null  || quantita<0 ){
             throw new ErroreCaricoException();
         }
         if (prodotto.getData() != null){
-            depositi.get(DEPOSITO_ALIMENTARI).caricoDeposito(prodotto, quantita);
+            Deposito deposito = depositi.get(DEPOSITO_ALIMENTARI);
+            deposito.caricoDeposito(prodotto, quantita);
         } else {
             depositi.get(DEPOSITO_NON_ALIMENTARI).caricoDeposito(prodotto, quantita);
         }
